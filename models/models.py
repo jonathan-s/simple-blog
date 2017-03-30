@@ -34,12 +34,21 @@ class PostManager(object):
         return post
 
     def search(self, term):
+        def post_sort(post, term):
+            count = post.title.count(term)
+            count =+ post.body.count(term)
+            return count
+
         posts = (Post
                  .select()
                  .where( (Post.title.contains(term)) |
                          (Post.body.contains(term)) )
                  .limit(3)
                  .execute())
+
+        posts = sorted([post for post in posts],
+                       key=lambda post: post_sort(post, term),
+                       reverse=True)
         return posts
 
 class Post(BaseModel):

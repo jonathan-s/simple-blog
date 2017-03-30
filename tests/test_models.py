@@ -65,7 +65,16 @@ class PostModelTest(unittest.TestCase):
         self.assertEqual(posts[0].body, 'mybody')
 
     def test_search_posts_ordered_according_to_how_many_terms(self):
-        pass
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1, title='test test', body='test test')
+            self.create_testdata(1, title='test test test', body='none')
+            self.create_testdata(1, title='test', body='test test test test test')
+            posts = Post.objects.search('test')
+            posts = [post for post in posts]
+
+        self.assertEqual(posts[0].title, 'test') # has most search term
+        self.assertEqual(posts[1].title, 'test test') # middle
+        self.assertEqual(posts[2].title, 'test test test') # last
 
     def test_pagination(self):
         pass
