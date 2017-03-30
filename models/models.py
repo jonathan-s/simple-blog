@@ -24,6 +24,10 @@ class PostDatabaseError(DatabaseError):
 
 class PostManager(object):
 
+    def get(self, _id):
+        post = Post.get(Post.id==_id)
+        return post
+
     def create(self, title, body):
         with db.atomic():
             try:

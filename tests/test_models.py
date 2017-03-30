@@ -36,6 +36,13 @@ class PostModelTest(unittest.TestCase):
 
         self.assertEqual(mock_logg.called, True)
 
+    def test_get_single_post(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1)
+            post = Post.objects.get(1)
+
+        self.assertEqual(post.title, 'test title 0')
+
     def test_create_post_with_weird_unicode(self):
         self.fail()
 
