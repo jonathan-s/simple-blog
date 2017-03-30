@@ -37,7 +37,7 @@ class PostModelTest(unittest.TestCase):
         self.assertEqual(mock_logg.called, True)
 
     def test_create_post_with_weird_unicode(self):
-        pass
+        self.fail()
 
     def test_search_finds_term_in_title(self):
         with test_database(test_db, (Post,)):

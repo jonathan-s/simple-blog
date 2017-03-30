@@ -27,5 +27,8 @@ class ScreensTest(unittest.TestCase):
         return posts
 
     def test_highlight_search_terms(self):
-        pass
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1,
+                body='lorem ipsum lorem ipsum test, lorem ipsum')[0]
+
 
