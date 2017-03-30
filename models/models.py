@@ -19,11 +19,17 @@ class BaseModel(Model):
 class PostManager(object):
 
     def create(self, title, body):
-        pass
+        with db.atomic():
+            try:
+                post = Post.create(title=title, body=body)
+            except Exception as exc:
+                logging.exception(exc.message)
+                return 'error'
+        return post
 
 class Post(BaseModel):
 
     title = CharField(max_length=100, null=False, index=True)
-    body = TextField(max_length=50, null=False)
+    body = TextField(null=False)
 
     objects = PostManager()
