@@ -30,14 +30,24 @@ class ScreensTest(unittest.TestCase):
         with test_database(test_db, (Post,)):
             post = self.create_testdata(1, body='lorem ipsum lorem ipsum test, lorem ipsum')[0]
 
-    def test_account_view(self):
+    def test_post_view(self):
         with test_database(test_db, (Post,)):
             self.create_testdata(1)
 
             resp = self.testapp.get('/post/1')
             self.assertEqual(resp.context['post'].title, 'test title 0')
 
-    def test_account_view_throws_404(self):
+    def test_post_view_throws_404(self):
         with test_database(test_db, (Post,)):
             resp = self.testapp.get('/post/1', expect_errors=True)
             self.assertEqual(resp.status_code, 404)
+
+    def test_post_list_view_is_paginated(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(30)
+
+            resp = self.testapp.get('/posts/2')
+            self.assertEqual(len(resp.context['posts']), 10)
+            self.assertEqual(resp.context['posts'][0].title, 'test title 10')
+
+

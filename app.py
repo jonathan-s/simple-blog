@@ -51,8 +51,8 @@ def close_db(error):
         g.db.close()
 
 routes = [
-    ('/post/<int:id>', PostView.as_view('account_view', template_name='post.html')),
-    ('/posts', PostListView.as_view('account_list', template_name='post_list.html')),
+    ('/post/<int:id>', PostView.as_view('post_view', template_name='post.html')),
+    ('/posts/<int:page>', PostListView.as_view('post_list', template_name='post_list.html')),
     ('/search', PostSearchView.as_view('post_search', template_name='post_search.html')),
     ('/post/create', PostCreateEditView.as_view('payment', template_name='post_edit_create.html')),
     ('/post/edit/<int:id>', PostCreateEditView.as_view('edit', template_name='post_edit_create.html'))

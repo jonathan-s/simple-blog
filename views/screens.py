@@ -19,10 +19,14 @@ class PostView(BaseView):
             context = {'status': 404}
         return context
 
+
 class PostListView(BaseView):
 
     def provide_context(self):
-        pass
+        page = self.parameters.get('page')
+        posts = Post.objects.paginate(2)
+        context = {'posts': list(posts)}
+        return context
 
 
 class PostSearchView(BaseView):
