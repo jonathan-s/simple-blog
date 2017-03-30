@@ -34,3 +34,23 @@ class PostModelTest(unittest.TestCase):
             post = Post.objects.create(title='test title', body='some body')
 
         self.assertEqual(mock_logg.called, True)
+
+    def test_create_post_with_weird_unicode(self):
+        pass
+
+    def test_search_posts_only_returns_three(self):
+        pass
+
+    def test_search_posts_ordered_according_to_how_many_terms(self):
+        pass
+
+    def test_pagination(self):
+        pass
+
+    def test_edit_post(self):
+        pass
+
+    def test_highlight_search_terms(self):
+        pass
+
+
