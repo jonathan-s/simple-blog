@@ -9,7 +9,7 @@ from peewee import (CharField,
 from playhouse.sqlite_ext import SqliteExtDatabase
 from settings import DATABASE_LOCATION
 
-db = SqliteExtDatabase(DATABASE_LOCATION)
+db = SqliteExtDatabase(DATABASE_LOCATION, journal_mode='WAL')
 
 
 class BaseModel(Model):
@@ -32,6 +32,11 @@ class PostManager(object):
                 logging.exception(exc.message)
                 raise PostDatabaseError(exc.message)
         return post
+
+    def search(self, term):
+        posts = Post.select().where((Post.title.contains(term)) |
+                                    (Post.body.contains(term))).execute()
+        return posts
 
 class Post(BaseModel):
 

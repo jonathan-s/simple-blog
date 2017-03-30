@@ -15,11 +15,10 @@ class PostModelTest(unittest.TestCase):
     def setUp(self):
         pass
 
-    def create_testdata(self):
-        for number in xrange(10):
-            Post.create(name='account-{}'.format(number),
-                           email='bogus@email.com',
-                           balance=200)
+    def create_testdata(self, no, title='test title {}', body='some body'):
+        for number in xrange(no):
+            Post.create(title=title.format(number),
+                        body=body)
 
     def test_create_post_with_manager(self):
         with test_database(test_db, (Post,)):
@@ -37,6 +36,24 @@ class PostModelTest(unittest.TestCase):
 
     def test_create_post_with_weird_unicode(self):
         pass
+
+    def test_search_finds_term_in_title(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1, title='mytitle')
+            posts = Post.objects.search('mytitle')
+            posts = [post for post in posts]
+
+        self.assertEqual(len(posts), 1)
+        self.assertEqual(posts[0].title, 'mytitle')
+
+    def test_search_finds_term_in_body(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1, body='mybody')
+            posts = Post.objects.search('mybody')
+            posts = [post for post in posts]
+
+        self.assertEqual(len(posts), 1)
+        self.assertEqual(posts[0].body, 'mybody')
 
     def test_search_posts_only_returns_three(self):
         pass
