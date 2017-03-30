@@ -95,9 +95,3 @@ class PostModelTest(unittest.TestCase):
         with self.assertRaises(PostDatabaseError):
             Post.objects.edit(1, 'test', 'test')
         self.assertEqual(mock_log.called, True)
-
-
-    def test_highlight_search_terms(self):
-        pass
-
-
