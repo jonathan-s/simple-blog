@@ -16,9 +16,11 @@ class PostModelTest(unittest.TestCase):
         pass
 
     def create_testdata(self, no, title='test title {}', body='some body'):
+        posts = []
         for number in xrange(no):
-            Post.create(title=title.format(number),
-                        body=body)
+            posts.append(Post.create(title=title.format(number),
+                                     body=body))
+        return posts
 
     def test_create_post_with_manager(self):
         with test_database(test_db, (Post,)):
@@ -80,7 +82,20 @@ class PostModelTest(unittest.TestCase):
         pass
 
     def test_edit_post(self):
-        pass
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1)[0]
+            Post.objects.edit(post.id, 'changed', 'new body')
+
+            changed = Post.get(Post.id==post.id)
+        self.assertEqual(changed.title, 'changed')
+        self.assertEqual(changed.body, 'new body')
+
+    @patch('logging.exception')
+    def test_edit_logs_on_failure(self, mock_log):
+        with self.assertRaises(PostDatabaseError):
+            Post.objects.edit(1, 'test', 'test')
+        self.assertEqual(mock_log.called, True)
+
 
     def test_highlight_search_terms(self):
         pass

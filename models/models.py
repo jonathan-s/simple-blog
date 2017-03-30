@@ -33,6 +33,18 @@ class PostManager(object):
                 raise PostDatabaseError(exc.message)
         return post
 
+    def edit(self, _id, title, body):
+        with db.atomic():
+            try:
+                post = (Post
+                        .update(title=title, body=body)
+                        .where(Post.id==_id)
+                        .execute())
+            except Exception as exc:
+                logging.exception(exc.message)
+                raise PostDatabaseError(exc.message)
+        return post
+
     def search(self, term):
         def post_sort(post, term):
             count = post.title.count(term)
