@@ -56,7 +56,13 @@ class PostModelTest(unittest.TestCase):
         self.assertEqual(posts[0].body, 'mybody')
 
     def test_search_posts_only_returns_three(self):
-        pass
+        with test_database(test_db, (Post,)):
+            self.create_testdata(4, body='mybody')
+            posts = Post.objects.search('mybody')
+            posts = [post for post in posts]
+
+        self.assertEqual(len(posts), 3)
+        self.assertEqual(posts[0].body, 'mybody')
 
     def test_search_posts_ordered_according_to_how_many_terms(self):
         pass

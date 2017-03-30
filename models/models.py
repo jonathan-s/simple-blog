@@ -34,8 +34,12 @@ class PostManager(object):
         return post
 
     def search(self, term):
-        posts = Post.select().where((Post.title.contains(term)) |
-                                    (Post.body.contains(term))).execute()
+        posts = (Post
+                 .select()
+                 .where( (Post.title.contains(term)) |
+                         (Post.body.contains(term)) )
+                 .limit(3)
+                 .execute())
         return posts
 
 class Post(BaseModel):
