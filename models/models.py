@@ -45,6 +45,14 @@ class PostManager(object):
                 raise PostDatabaseError(exc.message)
         return post
 
+    def paginate(self, page):
+        posts = (Post
+                 .select(Post.title)
+                 .order_by(Post.id)
+                 .paginate(page=page, paginate_by=10)
+                 .execute())
+        return posts
+
     def search(self, term):
         def post_sort(post, term):
             count = post.title.count(term)

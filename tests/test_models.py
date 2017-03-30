@@ -79,7 +79,12 @@ class PostModelTest(unittest.TestCase):
         self.assertEqual(posts[2].title, 'test test test') # last
 
     def test_pagination(self):
-        pass
+        with test_database(test_db, (Post,)):
+            self.create_testdata(30)
+            posts = Post.objects.paginate(2)
+            posts = [post for post in posts]
+        self.assertEqual(posts[0].title, 'test title 10')
+        self.assertEqual(len(posts), 10)
 
     def test_edit_post(self):
         with test_database(test_db, (Post,)):
