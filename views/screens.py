@@ -5,12 +5,19 @@ from wtforms.validators import DataRequired
 from peewee import DoesNotExist
 
 from views import BaseView
+from models.models import Post
 
 
 class PostView(BaseView):
 
     def provide_context(self):
-        pass
+        try:
+            _id = self.parameters.get('id')
+            post = Post.objects.get(_id)
+            context = {'post': post}
+        except DoesNotExist:
+            context = {'status': 404}
+        return context
 
 class PostListView(BaseView):
 

@@ -28,7 +28,16 @@ class ScreensTest(unittest.TestCase):
 
     def test_highlight_search_terms(self):
         with test_database(test_db, (Post,)):
-            post = self.create_testdata(1,
-                body='lorem ipsum lorem ipsum test, lorem ipsum')[0]
+            post = self.create_testdata(1, body='lorem ipsum lorem ipsum test, lorem ipsum')[0]
 
+    def test_account_view(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1)
 
+            resp = self.testapp.get('/post/1')
+            self.assertEqual(resp.context['post'].title, 'test title 0')
+
+    def test_account_view_throws_404(self):
+        with test_database(test_db, (Post,)):
+            resp = self.testapp.get('/post/1', expect_errors=True)
+            self.assertEqual(resp.status_code, 404)
