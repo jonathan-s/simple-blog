@@ -1,10 +1,11 @@
 import unittest
+import logging
 
 from playhouse.test_utils import test_database
 from peewee import SqliteDatabase
-from mock import MagicMock
+from mock import MagicMock, patch
 
-from models.models import Post
+from models.models import Post, PostDatabaseError
 
 test_db = SqliteDatabase(':memory:')
 
@@ -27,3 +28,9 @@ class PostModelTest(unittest.TestCase):
             self.assertEqual(post.title, 'test title')
             self.assertEqual(post.body, 'some body')
 
+    @patch('logging.exception')
+    def test_create_post_fails_raises_error(self, mock_logg):
+        with self.assertRaises(PostDatabaseError):
+            post = Post.objects.create(title='test title', body='some body')
+
+        self.assertEqual(mock_logg.called, True)

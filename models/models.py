@@ -3,7 +3,8 @@ import logging
 
 from peewee import (CharField,
                     TextField,
-                    Model)
+                    Model,
+                    DatabaseError)
 
 from playhouse.sqlite_ext import SqliteExtDatabase
 from settings import DATABASE_LOCATION
@@ -16,6 +17,11 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+
+class PostDatabaseError(DatabaseError):
+    pass
+
+
 class PostManager(object):
 
     def create(self, title, body):
@@ -24,7 +30,7 @@ class PostManager(object):
                 post = Post.create(title=title, body=body)
             except Exception as exc:
                 logging.exception(exc.message)
-                return 'error'
+                raise PostDatabaseError(exc.message)
         return post
 
 class Post(BaseModel):
