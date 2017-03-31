@@ -8,6 +8,7 @@ from flask_webtest import TestApp
 
 from app import app
 from models.models import Post
+from views.screens import PostSearchView
 
 test_db = SqliteDatabase(':memory:')
 
@@ -25,10 +26,6 @@ class ScreensTest(unittest.TestCase):
             posts.append(Post.create(title=title.format(number),
                                      body=body))
         return posts
-
-    def test_highlight_search_terms(self):
-        with test_database(test_db, (Post,)):
-            post = self.create_testdata(1, body='lorem ipsum lorem ipsum test, lorem ipsum')[0]
 
     def test_post_view(self):
         with test_database(test_db, (Post,)):
@@ -50,4 +47,35 @@ class ScreensTest(unittest.TestCase):
             self.assertEqual(len(resp.context['posts']), 10)
             self.assertEqual(resp.context['posts'][0].title, 'test title 10')
 
+    def test_highlight_search_terms(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, body='lorem ipsum lorem ipsum test, lorem ipsum')[0]
 
+            resp = self.testapp.get('/search?q=test')
+            self.assertEqual(resp.context['posts'][0].body,
+                             '... lorem ipsum <b>test</b>, lorem ipsum ...')
+
+    def test_highlight_search_terms_lacking_words_beginning(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, body='ipsum test, lorem ipsum')[0]
+
+            resp = self.testapp.get('/search?q=test')
+            self.assertEqual(resp.context['posts'][0].body,
+                             '... ipsum <b>test</b>, lorem ipsum ...')
+
+    def test_highlight_search_terms_lacking_words_end(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, body='lorem ipsum test, lorem')[0]
+
+            resp = self.testapp.get('/search?q=test')
+            self.assertEqual(resp.context['posts'][0].body,
+                             '... lorem ipsum <b>test</b>, lorem ...')
+
+    def test_highlight_search_terms_repeated(self):
+        self.fail()
+        # with test_database(test_db, (Post,)):
+        #     post = self.create_testdata(1, body='ipsum test, lorem ipsum')[0]
+
+        #     resp = self.testapp.get('/search?q=test')
+        #     self.assertEqual(resp.context['posts'][0].body,
+        #                      '... ipsum <b>test</b>, lorem ipsum ...')
