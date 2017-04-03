@@ -57,22 +57,27 @@ class PostSearchView(BaseView):
         return new_body, post
 
     def highlight_search(self, posts, term):
-
         for post in posts:
             index = 0
             new_body = ''
+            search_body = post.body
             index = 0
             while index != -1:
-                index = post.body.find(term)
+                index = search_body.find(term)
+                if index == -1:
+                    continue
+
                 if index == 0:
-                    index = post.body[1:].find(term)
+                    search_body = search_body[1:]
+                    index = search_body.find(term)
                     continue
                 matches = re.finditer(r'\w+', post.body)
                 new_body, post = self.generate_term_context(index, matches, post)
 
-                post.body = post.body[index:]
-                index = post.body.find(term)
+                search_body = search_body[index:]
+                index = search_body.find(term)
             new_body = new_body.replace(term, '<b>{}</b>'.format(term))
+            post.title = post.title.replace(term, '<b>{}</b>'.format(term))
             post.body = new_body + ' ...'
         return posts
 

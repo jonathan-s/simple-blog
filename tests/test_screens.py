@@ -63,6 +63,16 @@ class ScreensTest(unittest.TestCase):
             self.assertEqual(resp.context['posts'][0].body,
                              '... ipsum <b>test</b>, lorem ipsum ...')
 
+
+    def test_highlight_search_terms_repeated(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, body='lorem ipsum, lorem ipsum')[0]
+
+            resp = self.testapp.get('/search?q=ipsum')
+            self.assertEqual(resp.context['posts'][0].body,
+                             '... lorem <b>ipsum</b>, lorem <b>ipsum</b> ...')
+
+
     def test_highlight_search_terms_lacking_words_end(self):
         with test_database(test_db, (Post,)):
             post = self.create_testdata(1, body='lorem ipsum test, lorem')[0]
@@ -70,6 +80,21 @@ class ScreensTest(unittest.TestCase):
             resp = self.testapp.get('/search?q=test')
             self.assertEqual(resp.context['posts'][0].body,
                              '... lorem ipsum <b>test</b>, lorem ...')
+
+    def test_search_handles_no_matches_in_body(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, title='test', body='not found')
+
+            resp = self.testapp.get('/search?q=test')
+            self.assertEqual(len(resp.context['posts']), 1)
+
+    def test_highlight_titles_when_found_in_search_result(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, title='test title here test')
+
+            resp = self.testapp.get('/search?q=test')
+            self.assertEqual(resp.context['posts'][0].title,
+                             '<b>test</b> title here <b>test</b>')
 
     def test_create_post(self):
         with test_database(test_db, (Post,)):
@@ -120,11 +145,4 @@ class ScreensTest(unittest.TestCase):
             self.assertEqual('q=test' in resp.location, True)
 
 
-    def test_highlight_search_terms_repeated(self):
-        self.fail()
-        # with test_database(test_db, (Post,)):
-        #     post = self.create_testdata(1, body='ipsum test, lorem ipsum')[0]
 
-        #     resp = self.testapp.get('/search?q=test')
-        #     self.assertEqual(resp.context['posts'][0].body,
-        #                      '... ipsum <b>test</b>, lorem ipsum ...')

@@ -85,6 +85,13 @@ class PostModelTest(unittest.TestCase):
         self.assertEqual(posts[1].title, 'test test') # middle
         self.assertEqual(posts[2].title, 'test test test') # last
 
+    def test_search_returns_empty_list_when_nothing_is_found(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1, title='not found', body='not found')
+
+            posts = Post.objects.search('test')
+            self.assertEqual(posts, [])
+
     def test_pagination(self):
         with test_database(test_db, (Post,)):
             self.create_testdata(30)
