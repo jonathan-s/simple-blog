@@ -96,6 +96,16 @@ class ScreensTest(unittest.TestCase):
             self.assertEqual(resp.status_code, 302)
             self.assertEqual(changed.title, 'changed title')
 
+    def test_edit_screen_contains_prefilled_form_on_get(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, title='edit title', body='edit')[0]
+
+            resp = self.testapp.get('/post/edit/{}'.format(post.id))
+            form = resp.context['form']
+
+            self.assertEqual(form.title.data, 'edit title')
+            self.assertEqual(form.body.data, 'edit')
+
     def test_search_no_query_only_gives_form(self):
         resp = self.testapp.get('/search')
         self.assertEqual(resp.context['posts'], None)

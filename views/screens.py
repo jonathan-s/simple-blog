@@ -110,7 +110,14 @@ class PostCreateEditView(BaseView):
     methods = ['GET', 'POST', 'PUT']
 
     def provide_context(self):
-        return {'form': PostForm()}
+        _id = self.parameters.get('id')
+        postform = PostForm()
+        if _id:
+            post = Post.objects.get(_id)
+            postform.title.data = post.title
+            postform.body.data = post.body
+
+        return {'form': postform}
 
     def post(self):
         postform = PostForm()
