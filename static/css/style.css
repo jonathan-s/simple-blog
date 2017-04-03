@@ -9,15 +9,27 @@
     margin-top: 3em;
 }
 
-.payment-form {
+.standard-form {
     width: 25%;
     margin: auto;
     text-align:center;
     margin-top: 4em;
 }
 
+.search-form {
+    position: absolute;
+    margin-top: -17px;
+    right: 75px;
+}
+
 footer p{
     margin-left: 4em;
+}
+
+.search-button {
+    position: absolute;
+    top: 26px;
+    right: 13em;
 }
 
 .container {
