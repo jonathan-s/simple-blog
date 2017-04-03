@@ -61,13 +61,12 @@ class PostSearchView(BaseView):
             index = 0
             new_body = ''
             search_body = post.body
-            index = 0
+            index = search_body.find(term)
+
             while index != -1:
-                index = search_body.find(term)
                 if index == -1:
                     continue
-
-                if index == 0:
+                elif index == 0:
                     search_body = search_body[1:]
                     index = search_body.find(term)
                     continue
@@ -76,8 +75,8 @@ class PostSearchView(BaseView):
 
                 search_body = search_body[index:]
                 index = search_body.find(term)
-            new_body = new_body.replace(term, '<b>{}</b>'.format(term))
-            post.title = post.title.replace(term, '<b>{}</b>'.format(term))
+            new_body = re.sub(term, '<b>{}</b>'.format(term), new_body.lower(), re.IGNORECASE)
+            post.title = re.sub(term, '<b>{}</b>'.format(term), post.title.lower(), re.IGNORECASE)
             post.body = new_body + ' ...'
         return posts
 
