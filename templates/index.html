@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block headline %}
+Welcome to a simple blog
+{% endblock headline %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <a href="{{ url_for('post_list', page=1) }}"><h2 class="title">Posts</h2></a>
+    </div>
+    <div class="col-md-6">
+        <a href="{{ url_for('post_search') }}"><h2 class="title">Search</h2></a>
+    </div>
+</div>
+{% endblock %}
