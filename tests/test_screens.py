@@ -90,7 +90,7 @@ class ScreensTest(unittest.TestCase):
                 'body': 'changed body'
             }
 
-            resp = self.testapp.put('/post/edit/{}'.format(post.id), params=params)
+            resp = self.testapp.post('/post/edit/{}'.format(post.id), params=params)
             changed = Post.objects.get(post.id)
 
             self.assertEqual(resp.status_code, 302)

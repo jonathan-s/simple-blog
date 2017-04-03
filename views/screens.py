@@ -106,17 +106,11 @@ class PostForm(Form):
     body = TextAreaField()
 
 
-class PostCreateEditView(BaseView):
-    methods = ['GET', 'POST', 'PUT']
+class PostCreateView(BaseView):
+    methods = ['GET', 'POST']
 
     def provide_context(self):
-        _id = self.parameters.get('id')
         postform = PostForm()
-        if _id:
-            post = Post.objects.get(_id)
-            postform.title.data = post.title
-            postform.body.data = post.body
-
         return {'form': postform}
 
     def post(self):
@@ -132,7 +126,21 @@ class PostCreateEditView(BaseView):
             except PostDatabaseError as exc:
                 return {'error': exc.message, 'form': postform}
 
-    def put(self):
+
+class PostEditView(BaseView):
+    methods = ['GET', 'POST']
+
+    def provide_context(self):
+        _id = self.parameters.get('id')
+        postform = PostForm()
+        if _id:
+            post = Post.objects.get(_id)
+            postform.title.data = post.title
+            postform.body.data = post.body
+
+        return {'form': postform, '_id': _id}
+
+    def post(self):
         _id = self.parameters.get('id')
         postform = PostForm()
         postform.process(request.form)

@@ -8,7 +8,8 @@ from models.models import db, Post
 from views.screens import (PostView,
                            PostListView,
                            PostSearchView,
-                           PostCreateEditView,
+                           PostEditView,
+                           PostCreateView,
                            IndexView)
 
 app = Flask(__name__)
@@ -54,8 +55,8 @@ routes = [
     ('/post/<int:id>', PostView.as_view('post_view', template_name='post.html')),
     ('/posts/<int:page>', PostListView.as_view('post_list', template_name='post_list.html')),
     ('/search', PostSearchView.as_view('post_search', template_name='post_search.html')),
-    ('/post/create', PostCreateEditView.as_view('post_create', template_name='post_edit_create.html')),
-    ('/post/edit/<int:id>', PostCreateEditView.as_view('edit', template_name='post_edit_create.html')),
+    ('/post/create', PostCreateView.as_view('post_create', template_name='post_edit_create.html')),
+    ('/post/edit/<int:id>', PostEditView.as_view('edit', template_name='post_edit_create.html')),
     ('/', IndexView.as_view('index', template_name='index.html'))
 ]
 
