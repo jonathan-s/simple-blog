@@ -33,6 +33,8 @@ class PostListView(BaseView):
 
 class PostSearchView(BaseView):
 
+    methods = ['GET', 'POST']
+
     def generate_term_context(self, index, matches, post):
         new_body = ''
         temp_matches = []
@@ -85,8 +87,11 @@ class PostSearchView(BaseView):
     def provide_context(self):
         query = request.args.get('q')
         search_form = SearchForm()
-        posts = Post.objects.search(query)
-        highlighted = self.highlight_search(posts, query)
+        if query:
+            posts = Post.objects.search(query)
+            highlighted = self.highlight_search(posts, query)
+        else:
+            highlighted = None
         return {'posts': highlighted, 'form': search_form}
 
 
@@ -122,7 +127,6 @@ class PostCreateEditView(BaseView):
 
     def put(self):
         _id = self.parameters.get('id')
-        # need some data here
         postform = PostForm()
         postform.process(request.form)
         if postform.validate():

@@ -8,7 +8,7 @@ from flask_webtest import TestApp
 
 from app import app
 from models.models import Post
-from views.screens import PostSearchView
+from views.screens import PostSearchView, SearchForm
 
 test_db = SqliteDatabase(':memory:')
 
@@ -95,6 +95,12 @@ class ScreensTest(unittest.TestCase):
 
             self.assertEqual(resp.status_code, 302)
             self.assertEqual(changed.title, 'changed title')
+
+    def test_search_no_query_only_gives_form(self):
+        resp = self.testapp.get('/search')
+        self.assertEqual(resp.context['posts'], None)
+        self.assertEqual(isinstance(resp.context['form'], SearchForm), True)
+
 
     def test_highlight_search_terms_repeated(self):
         self.fail()
