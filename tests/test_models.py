@@ -13,7 +13,7 @@ test_db = SqliteDatabase(':memory:')
 class PostModelTest(unittest.TestCase):
 
     def setUp(self):
-        pass
+        Post._meta.database = test_db
 
     def create_testdata(self, no, title='test title {}', body='some body'):
         posts = []
