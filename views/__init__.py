@@ -4,6 +4,9 @@ from flask import request
 from flask import redirect
 from flask import url_for
 
+from forms.forms import SearchForm
+
+
 class BaseView(View):
 
     def __init__(self, template_name):
@@ -26,5 +29,6 @@ class BaseView(View):
         context = self.provide_context()
         if context.get('status', 200) == 404:
             self.template_name = '404.html'
+        context['search_form'] = SearchForm()
 
         return self.render_template(context=context), context.get('status')

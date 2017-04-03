@@ -1,12 +1,10 @@
 import re
 
 from flask import redirect, url_for, flash, request
-from wtforms import Form
-from wtforms import SubmitField, TextAreaField, StringField
-from wtforms.validators import DataRequired
 from peewee import DoesNotExist
 
 from views import BaseView
+from forms.forms import SearchForm, PostForm
 from models.models import Post, PostDatabaseError
 
 
@@ -92,18 +90,7 @@ class PostSearchView(BaseView):
             highlighted = self.highlight_search(posts, query)
         else:
             highlighted = None
-        return {'posts': highlighted, 'form': search_form}
-
-
-
-
-class SearchForm(Form):
-    query = StringField()
-
-
-class PostForm(Form):
-    title = StringField()
-    body = TextAreaField()
+        return {'posts': highlighted, 'form': search_form, 'query': query}
 
 
 class PostCreateView(BaseView):
