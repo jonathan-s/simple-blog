@@ -101,6 +101,14 @@ class ScreensTest(unittest.TestCase):
         self.assertEqual(resp.context['posts'], None)
         self.assertEqual(isinstance(resp.context['form'], SearchForm), True)
 
+    def test_search_redirects_on_post_request(self):
+        with test_database(test_db, (Post,)):
+            self.create_testdata(1)
+
+            resp = self.testapp.post('/search', params={'query': 'test'})
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual('q=test' in resp.location, True)
+
 
     def test_highlight_search_terms_repeated(self):
         self.fail()
