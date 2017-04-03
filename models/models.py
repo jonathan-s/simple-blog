@@ -51,7 +51,7 @@ class PostManager(object):
 
     def paginate(self, page):
         posts = (Post
-                 .select(Post.title)
+                 .select(Post.title, Post.id)
                  .order_by(Post.id)
                  .paginate(page=page, paginate_by=10)
                  .execute())

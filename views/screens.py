@@ -26,7 +26,7 @@ class PostListView(BaseView):
 
     def provide_context(self):
         page = self.parameters.get('page')
-        posts = Post.objects.paginate(2)
+        posts = Post.objects.paginate(page)
         context = {'posts': list(posts)}
         return context
 
