@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired
 from peewee import DoesNotExist
 
 from views import BaseView
-from models.models import Post
+from models.models import Post, PostDatabaseError
 
 
 class PostView(BaseView):
@@ -76,32 +76,65 @@ class PostSearchView(BaseView):
             post.body = new_body + ' ...'
         return posts
 
+    def post(self):
+        search_form = SearchForm()
+        search_form.process(request.form)
+        if search_form.validate():
+            self.redirect = url_for('post_search', q=search_form.query.data)
+
     def provide_context(self):
         query = request.args.get('q')
+        search_form = SearchForm()
         posts = Post.objects.search(query)
         highlighted = self.highlight_search(posts, query)
-        return {'posts': highlighted}
+        return {'posts': highlighted, 'form': search_form}
+
+
 
 
 class SearchForm(Form):
-    pass
+    query = StringField()
 
 
 class PostForm(Form):
-    pass
+    title = StringField()
+    body = TextAreaField()
 
 
 class PostCreateEditView(BaseView):
     methods = ['GET', 'POST', 'PUT']
 
     def provide_context(self):
-        pass
+        return {'form': PostForm()}
 
     def post(self):
         postform = PostForm()
         postform.process(request.form)
         if postform.validate():
-            pass
+            try:
+                post = (Post
+                        .objects
+                        .create(title=postform.title.data,
+                                body=postform.body.data))
+                self.redirect = url_for('post_view', id=post.id)
+            except PostDatabaseError as exc:
+                return {'error': exc.message, 'form': postform}
+
+    def put(self):
+        _id = self.parameters.get('id')
+        # need some data here
+        postform = PostForm()
+        postform.process(request.form)
+        if postform.validate():
+            try:
+                _id = (Post
+                        .objects
+                        .edit(_id=_id,
+                              title=postform.title.data,
+                              body=postform.body.data))
+                self.redirect = url_for('post_view', id=_id)
+            except PostDatabaseError as exc:
+                return {'error': exc.message, 'form': postform}
 
 
 class IndexView(BaseView):

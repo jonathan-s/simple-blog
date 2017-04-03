@@ -21,7 +21,12 @@ class BaseView(View):
             result = self.post()
             if result:
                 return self.render_template(context=result)
-            return redirect(url_for('payment'))
+            return redirect(self.redirect)
+        elif request.method == 'PUT':
+            result = self.put()
+            if result:
+                return self.render_template(context=result)
+            return redirect(self.redirect)
 
         context = self.provide_context()
         if context.get('status', 200) == 404:

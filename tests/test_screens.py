@@ -71,6 +71,31 @@ class ScreensTest(unittest.TestCase):
             self.assertEqual(resp.context['posts'][0].body,
                              '... lorem ipsum <b>test</b>, lorem ...')
 
+    def test_create_post(self):
+        with test_database(test_db, (Post,)):
+            params = {
+                'title': 'some title',
+                'body': 'some body'
+            }
+
+            resp = self.testapp.post('/post/create', params=params)
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual('/post/' in resp.location, True)
+
+    def test_edit_post(self):
+        with test_database(test_db, (Post,)):
+            post = self.create_testdata(1, title='test', body='test body')[0]
+            params = {
+                'title': 'changed title',
+                'body': 'changed body'
+            }
+
+            resp = self.testapp.put('/post/edit/{}'.format(post.id), params=params)
+            changed = Post.objects.get(post.id)
+
+            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(changed.title, 'changed title')
+
     def test_highlight_search_terms_repeated(self):
         self.fail()
         # with test_database(test_db, (Post,)):
